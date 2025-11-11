@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    // Display color
+    <color name="display">#061213</color>
+
+    // Gradient colors
+    <color name="gradient_start">#158c9d</color>
+    <color name="gradient_end">#8bd0da</color>
+
+    // Function buttons
+    <color name="function_button">#294f82</color>
+
+    // Number buttons
+    <color name="number_buttons">#bedfef</color>
+
+    // Equals button
+    <color name="equals_button">#074965</color>
+
+</resources>
