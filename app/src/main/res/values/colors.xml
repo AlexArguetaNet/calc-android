@@ -11,10 +11,11 @@
     <color name="gradient_end">#8bd0da</color>
 
     // Function buttons
-    <color name="function_button">#294f82</color>
+    <color name="function_button">#7C294F82</color>
 
     // Number buttons
-    <color name="number_buttons">#bedfef</color>
+    <color name="number_button">#CFBEDFEF</color>
+    <color name="number_button_font">#085778</color>
 
     // Equals button
     <color name="equals_button">#074965</color>
