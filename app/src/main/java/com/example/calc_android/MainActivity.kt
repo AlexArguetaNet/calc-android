@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         if (symbolCount + 1 == numCount) {
             return true
         } else {
+            errorDisplaying = true
             return false
         }
 
