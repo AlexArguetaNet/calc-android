@@ -1,6 +1,8 @@
 package com.example.calc_android
 
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -9,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+
+    private val TAG = "mooo"
 
     private lateinit var textViewMain: TextView
     private lateinit var opString: String
@@ -48,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate the main text view and set the string value
         textViewMain = findViewById(R.id.textViewMain)
-        opString = ""
+        opString = "0"
         textViewMain.text = opString
 
         // Instantiating number buttons
@@ -62,8 +66,17 @@ class MainActivity : AppCompatActivity() {
                     errorDisplaying = false
                 }
 
-                opString = "$opString$i"
+                if (opString == "0") {
+                    opString = i.toString()
+                } else {
+                    opString = "$opString$i"
+                }
+
                 textViewMain.text = opString
+
+                // Resize text if necessary
+                resizeText()
+
             }
 
         }
@@ -71,8 +84,12 @@ class MainActivity : AppCompatActivity() {
         // Instantiate clear button
         buttonClear = findViewById(R.id.buttonClear)
         buttonClear.setOnClickListener {
-            opString = ""
+            opString = "0"
             textViewMain.text = opString
+
+            // Reset font size
+            textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 65f)
+            Log.d(TAG, "resizeText: 65sp")
         }
 
         // Instantiate function buttons
@@ -96,6 +113,8 @@ class MainActivity : AppCompatActivity() {
                     "buttonNegation" -> opString = "${opString}-"
                 }
                 textViewMain.text = opString
+                // Resize text if necessary
+                resizeText()
             }
 
         }
@@ -117,6 +136,15 @@ class MainActivity : AppCompatActivity() {
                 opString = result[0]
                 textViewMain.text = opString
 
+                // Resize text accordingly
+                if (opString.length > 9 && opString.length < 16) {
+                    textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f)
+                } else if (opString.length > 16) {
+                    textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25f)
+                } else {
+                    textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 65f)
+                }
+
             } else {
                 textViewMain.text = "Error"
             }
@@ -125,6 +153,18 @@ class MainActivity : AppCompatActivity() {
 
 
     } // End of onCreate
+
+    fun resizeText() {
+
+        if (textViewMain.text.length == 9) {
+            textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f)
+            Log.d(TAG, "resizeText: 40sp")
+        } else if (textViewMain.text.length == 16) {
+            textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25f)
+            Log.d(TAG, "resizeText: 20sp")
+        }
+
+    }
 
     fun isOperator(token: String): Boolean {
         return token == "x" ||
@@ -262,14 +302,14 @@ class MainActivity : AppCompatActivity() {
     fun calculate(expSlice: List<String>): String {
 
         val operator = expSlice[1]
-        val x = expSlice[0].toInt()
-        val y = expSlice[2].toInt()
-        var result = 0
+        val x = expSlice[0].toLong()
+        val y = expSlice[2].toLong()
+        var result: Long = 0
 
         when (operator) {
             "x" -> result = x * y
             "÷" -> {
-                if (y == 0) {
+                if (y.toInt() == 0) {
                     return "null"
                 } else {
                     result = x / y
