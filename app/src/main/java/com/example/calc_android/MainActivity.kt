@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         R.id.buttonMultiply,
         R.id.buttonSubtract,
         R.id.buttonAdd,
+        R.id.buttonNegation
     )
 
     private var errorDisplaying = false
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity() {
                     "buttonMultiply" -> opString = "${opString}x"
                     "buttonSubtract" -> opString = "${opString}-"
                     "buttonAdd" -> opString = "${opString}+"
+                    "buttonNegation" -> opString = "${opString}-"
                 }
                 textViewMain.text = opString
             }
@@ -105,12 +107,12 @@ class MainActivity : AppCompatActivity() {
             val expression = textViewMain.text
             val mathSymbolsRegex = Regex("((?=[+\\-\\ \\\\x÷()])|(?<=[+\\-\\ \\\\x÷()]))")
 
-            val expList: MutableList<String> = expression.split(mathSymbolsRegex).toMutableList()
+            var expList: MutableList<String> = expression.split(mathSymbolsRegex).toMutableList()
+            expList = simplifyNegatives(expList)
 
             if (isValidExpression(expList)) {
 
                 // Calculate expression
-
                 val result = getAnswer(expList)
                 opString = result[0]
                 textViewMain.text = opString
@@ -124,31 +126,71 @@ class MainActivity : AppCompatActivity() {
 
     } // End of onCreate
 
+    fun isOperator(token: String): Boolean {
+        return token == "x" ||
+            token == "÷" ||
+            token == "+" ||
+            token == "-"
+    }
+
     fun isValidExpression(expression: MutableList<String>): Boolean {
 
         var symbolCount = 0
         var numCount = 0
 
-        for (ch in expression) {
-            if (ch == "÷" ||
-                ch == "x" ||
-                ch == "-" ||
-                ch == "+") {
+        for (token in expression) {
+            if (isOperator(token)) {
                 symbolCount++
-            } else if (ch.toIntOrNull() != null){
+            } else if (token.toIntOrNull() != null) {
                 numCount++
             }
         }
 
-        if (symbolCount + 1 == numCount) {
-            return true
-        } else {
-            errorDisplaying = true
-            return false
-        }
+        return symbolCount + 1 == numCount
 
     }
 
+    fun simplifyNegatives(exp: MutableList<String>): MutableList<String> {
+
+        val expFinal = mutableListOf<String>()
+
+        var j = 0 // Loop count
+
+        while (true) {
+            // Check if token is subtraction symbol
+            if (exp[j] == "-" && (exp[j + 1].toIntOrNull() != null)) {
+
+                if (j == 0) {
+                    expFinal.add("${exp[j]}${exp[j + 1]}")
+                    j++
+                } else if (exp[j - 1] == "-") {
+                    expFinal[expFinal.size - 1] = "+"
+                    expFinal.add(exp[j + 1])
+                    j++
+                } else if ( exp[j - 1].toIntOrNull() != null ) {
+                    expFinal.add(exp[j])
+                } else {
+                    expFinal.add("${exp[j]}${exp[j + 1]}")
+                    j++
+                }
+
+            } else if ( isOperator(exp[j]) || (exp[j].toIntOrNull() != null) ) {
+                expFinal.add(exp[j])
+            }
+
+            j++
+
+            println("\nParsing negatives: $expFinal")
+
+            if (j == exp.size) {
+                break
+            }
+
+        }
+
+        return expFinal
+
+    }
 
     fun getAnswer(expression: MutableList<String>): MutableList<String> {
 
