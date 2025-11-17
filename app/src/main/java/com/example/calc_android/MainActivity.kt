@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
                 when (buttonResourceName) {
                     "buttonDivide" -> opString = "${opString}÷"
-                    "buttonMultiply" -> opString = "${opString}x"
+                    "buttonMultiply" -> opString = "${opString}×"
                     "buttonSubtract" -> opString = "${opString}-"
                     "buttonAdd" -> opString = "${opString}+"
                     "buttonNegation" -> opString = "${opString}-"
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         buttonEquals.setOnClickListener {
 
             val expression = textViewMain.text
-            val mathSymbolsRegex = Regex("((?=[+\\-\\ \\\\x÷()])|(?<=[+\\-\\ \\\\x÷()]))")
+            val mathSymbolsRegex = Regex("((?=[+\\-\\ \\\\×÷()])|(?<=[+\\-\\ \\\\×÷()]))")
 
             var expList: MutableList<String> = expression.split(mathSymbolsRegex).toMutableList()
             expList = simplifyNegatives(expList)
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun isOperator(token: String): Boolean {
-        return token == "x" ||
+        return token == "×" ||
             token == "÷" ||
             token == "+" ||
             token == "-"
@@ -241,8 +241,8 @@ class MainActivity : AppCompatActivity() {
         var i = 0
 
         // Perform multiplication and division first
-        while (exp.contains("x") || exp.contains("÷")) {
-            if (exp[i] == "x") {
+        while (exp.contains("×") || exp.contains("÷")) {
+            if (exp[i] == "×") {
                 exp = simplify(exp, i)
                 i = 0
             } else if (exp[i] == "÷") {
@@ -307,7 +307,7 @@ class MainActivity : AppCompatActivity() {
         var result: Long = 0
 
         when (operator) {
-            "x" -> result = x * y
+            "×" -> result = x * y
             "÷" -> {
                 if (y.toInt() == 0) {
                     return "null"
