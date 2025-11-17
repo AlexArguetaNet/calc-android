@@ -5,6 +5,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var errorDisplaying = false
+    private var digitCount = 0
+    private var digitToast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,21 +64,34 @@ class MainActivity : AppCompatActivity() {
             val numButton: Button = findViewById(numberButtonIds[i])
             numButton.setOnClickListener {
 
-                if (errorDisplaying) {
-                    opString = ""
-                    errorDisplaying = false
-                }
+                if (digitCount == 8) {
 
-                if (opString == "0") {
-                    opString = i.toString()
+                    digitToast?.cancel()
+
+                    digitToast = Toast.makeText(this, "Can't enter more than 8 digits.", Toast.LENGTH_SHORT)
+                    digitToast?.show()
+
                 } else {
-                    opString = "$opString$i"
+
+                    if (errorDisplaying) {
+                        opString = ""
+                        errorDisplaying = false
+                    }
+
+                    if (opString == "0") {
+                        opString = i.toString()
+                    } else {
+                        digitCount++
+                        opString = "$opString$i"
+                    }
+
+                    textViewMain.text = opString
+
+                    // Resize text if necessary
+                    resizeText()
+
                 }
 
-                textViewMain.text = opString
-
-                // Resize text if necessary
-                resizeText()
 
             }
 
@@ -86,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         buttonClear.setOnClickListener {
             opString = "0"
             textViewMain.text = opString
+            digitCount = 0
 
             // Reset font size
             textViewMain.setTextSize(TypedValue.COMPLEX_UNIT_SP, 65f)
@@ -113,6 +130,7 @@ class MainActivity : AppCompatActivity() {
                     "buttonNegation" -> opString = "${opString}-"
                 }
                 textViewMain.text = opString
+                digitCount = 0
                 // Resize text if necessary
                 resizeText()
             }
